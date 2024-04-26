@@ -18,8 +18,8 @@ import (
 	"sync"
 	"time"
 
-	pb "github.com/coreos/etcd/etcdserver/etcdserverpb"
-	"github.com/coreos/etcd/mvcc"
+	pb "etcd/etcdserver/etcdserverpb"
+	"etcd/mvcc"
 	"github.com/coreos/pkg/capnslog"
 	"github.com/jonboulle/clockwork"
 	"golang.org/x/net/context"

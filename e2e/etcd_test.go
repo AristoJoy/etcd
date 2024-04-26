@@ -21,9 +21,9 @@ import (
 	"os"
 	"strings"
 
-	"github.com/coreos/etcd/etcdserver"
-	"github.com/coreos/etcd/pkg/expect"
-	"github.com/coreos/etcd/pkg/fileutil"
+	"etcd/etcdserver"
+	"etcd/pkg/expect"
+	"etcd/pkg/fileutil"
 )
 
 const etcdProcessBasePort = 20000

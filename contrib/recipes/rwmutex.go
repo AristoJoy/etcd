@@ -15,9 +15,9 @@
 package recipe
 
 import (
-	v3 "github.com/coreos/etcd/clientv3"
-	"github.com/coreos/etcd/clientv3/concurrency"
-	"github.com/coreos/etcd/mvcc/mvccpb"
+	v3 "etcd/clientv3"
+	"etcd/clientv3/concurrency"
+	"etcd/mvcc/mvccpb"
 	"golang.org/x/net/context"
 )
 

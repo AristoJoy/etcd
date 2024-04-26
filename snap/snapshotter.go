@@ -26,11 +26,11 @@ import (
 	"strings"
 	"time"
 
-	pioutil "github.com/coreos/etcd/pkg/ioutil"
-	"github.com/coreos/etcd/pkg/pbutil"
-	"github.com/coreos/etcd/raft"
-	"github.com/coreos/etcd/raft/raftpb"
-	"github.com/coreos/etcd/snap/snappb"
+	pioutil "etcd/pkg/ioutil"
+	"etcd/pkg/pbutil"
+	"etcd/raft"
+	"etcd/raft/raftpb"
+	"etcd/snap/snappb"
 
 	"github.com/coreos/pkg/capnslog"
 )

@@ -17,7 +17,7 @@ package raft
 import (
 	"errors"
 
-	pb "github.com/coreos/etcd/raft/raftpb"
+	pb "etcd/raft/raftpb"
 	"golang.org/x/net/context"
 )
 

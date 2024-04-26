@@ -21,13 +21,13 @@ import (
 	"net/http"
 	"path/filepath"
 
-	"github.com/coreos/etcd/etcdserver"
-	"github.com/coreos/etcd/etcdserver/api/v2http"
-	"github.com/coreos/etcd/pkg/cors"
-	runtimeutil "github.com/coreos/etcd/pkg/runtime"
-	"github.com/coreos/etcd/pkg/transport"
-	"github.com/coreos/etcd/pkg/types"
-	"github.com/coreos/etcd/rafthttp"
+	"etcd/etcdserver"
+	"etcd/etcdserver/api/v2http"
+	"etcd/pkg/cors"
+	runtimeutil "etcd/pkg/runtime"
+	"etcd/pkg/transport"
+	"etcd/pkg/types"
+	"etcd/rafthttp"
 	"github.com/coreos/pkg/capnslog"
 )
 

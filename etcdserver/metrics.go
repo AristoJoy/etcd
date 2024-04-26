@@ -17,7 +17,7 @@ package etcdserver
 import (
 	"time"
 
-	"github.com/coreos/etcd/pkg/runtime"
+	"etcd/pkg/runtime"
 	"github.com/prometheus/client_golang/prometheus"
 )
 

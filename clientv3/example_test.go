@@ -18,8 +18,8 @@ import (
 	"log"
 	"time"
 
-	"github.com/coreos/etcd/clientv3"
-	"github.com/coreos/etcd/pkg/transport"
+	"etcd/clientv3"
+	"etcd/pkg/transport"
 	"github.com/coreos/pkg/capnslog"
 	"golang.org/x/net/context"
 )

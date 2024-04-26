@@ -20,10 +20,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/coreos/etcd/etcdserver/stats"
-	"github.com/coreos/etcd/pkg/testutil"
-	"github.com/coreos/etcd/pkg/types"
-	"github.com/coreos/etcd/raft/raftpb"
+	"etcd/etcdserver/stats"
+	"etcd/pkg/testutil"
+	"etcd/pkg/types"
+	"etcd/raft/raftpb"
 	"github.com/xiang90/probing"
 )
 

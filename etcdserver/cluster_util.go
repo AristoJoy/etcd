@@ -22,10 +22,10 @@ import (
 	"sort"
 	"time"
 
-	"github.com/coreos/etcd/etcdserver/membership"
-	"github.com/coreos/etcd/pkg/httputil"
-	"github.com/coreos/etcd/pkg/types"
-	"github.com/coreos/etcd/version"
+	"etcd/etcdserver/membership"
+	"etcd/pkg/httputil"
+	"etcd/pkg/types"
+	"etcd/version"
 	"github.com/coreos/go-semver/semver"
 )
 

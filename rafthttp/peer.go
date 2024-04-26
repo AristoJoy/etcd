@@ -18,11 +18,11 @@ import (
 	"sync"
 	"time"
 
-	"github.com/coreos/etcd/etcdserver/stats"
-	"github.com/coreos/etcd/pkg/types"
-	"github.com/coreos/etcd/raft"
-	"github.com/coreos/etcd/raft/raftpb"
-	"github.com/coreos/etcd/snap"
+	"etcd/etcdserver/stats"
+	"etcd/pkg/types"
+	"etcd/raft"
+	"etcd/raft/raftpb"
+	"etcd/snap"
 	"golang.org/x/net/context"
 )
 

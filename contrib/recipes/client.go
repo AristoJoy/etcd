@@ -17,8 +17,8 @@ package recipe
 import (
 	"errors"
 
-	v3 "github.com/coreos/etcd/clientv3"
-	spb "github.com/coreos/etcd/mvcc/mvccpb"
+	v3 "etcd/clientv3"
+	spb "etcd/mvcc/mvccpb"
 	"golang.org/x/net/context"
 )
 

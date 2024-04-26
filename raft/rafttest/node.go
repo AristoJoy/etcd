@@ -19,8 +19,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/coreos/etcd/raft"
-	"github.com/coreos/etcd/raft/raftpb"
+	"etcd/raft"
+	"etcd/raft/raftpb"
 	"golang.org/x/net/context"
 )
 

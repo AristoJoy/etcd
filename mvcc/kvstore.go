@@ -22,10 +22,10 @@ import (
 	"sync"
 	"time"
 
-	"github.com/coreos/etcd/lease"
-	"github.com/coreos/etcd/mvcc/backend"
-	"github.com/coreos/etcd/mvcc/mvccpb"
-	"github.com/coreos/etcd/pkg/schedule"
+	"etcd/lease"
+	"etcd/mvcc/backend"
+	"etcd/mvcc/mvccpb"
+	"etcd/pkg/schedule"
 	"github.com/coreos/pkg/capnslog"
 	"golang.org/x/net/context"
 )

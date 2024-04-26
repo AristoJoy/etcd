@@ -24,7 +24,7 @@ import (
 
 	"golang.org/x/net/context"
 
-	"github.com/coreos/etcd/pkg/types"
+	"etcd/pkg/types"
 )
 
 var (

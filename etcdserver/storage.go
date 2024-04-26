@@ -17,13 +17,13 @@ package etcdserver
 import (
 	"io"
 
-	pb "github.com/coreos/etcd/etcdserver/etcdserverpb"
-	"github.com/coreos/etcd/pkg/pbutil"
-	"github.com/coreos/etcd/pkg/types"
-	"github.com/coreos/etcd/raft/raftpb"
-	"github.com/coreos/etcd/snap"
-	"github.com/coreos/etcd/wal"
-	"github.com/coreos/etcd/wal/walpb"
+	pb "etcd/etcdserver/etcdserverpb"
+	"etcd/pkg/pbutil"
+	"etcd/pkg/types"
+	"etcd/raft/raftpb"
+	"etcd/snap"
+	"etcd/wal"
+	"etcd/wal/walpb"
 )
 
 type Storage interface {

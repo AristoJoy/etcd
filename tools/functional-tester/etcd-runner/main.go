@@ -19,7 +19,7 @@ import (
 	"log"
 	"time"
 
-	"github.com/coreos/etcd/tools/functional-tester/etcd-runner/command"
+	"etcd/tools/functional-tester/etcd-runner/command"
 	"github.com/spf13/cobra"
 )
 

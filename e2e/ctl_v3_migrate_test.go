@@ -22,8 +22,8 @@ import (
 
 	"golang.org/x/net/context"
 
-	"github.com/coreos/etcd/clientv3"
-	"github.com/coreos/etcd/pkg/testutil"
+	"etcd/clientv3"
+	"etcd/pkg/testutil"
 )
 
 func TestCtlV3Migrate(t *testing.T) {

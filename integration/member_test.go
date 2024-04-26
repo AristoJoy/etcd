@@ -21,8 +21,8 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/coreos/etcd/client"
-	"github.com/coreos/etcd/pkg/testutil"
+	"etcd/client"
+	"etcd/pkg/testutil"
 	"golang.org/x/net/context"
 )
 

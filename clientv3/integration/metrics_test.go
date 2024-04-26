@@ -24,10 +24,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/coreos/etcd/clientv3"
-	"github.com/coreos/etcd/integration"
-	"github.com/coreos/etcd/pkg/testutil"
-	"github.com/coreos/etcd/pkg/transport"
+	"etcd/clientv3"
+	"etcd/integration"
+	"etcd/pkg/testutil"
+	"etcd/pkg/transport"
 
 	"github.com/prometheus/client_golang/prometheus"
 	"golang.org/x/net/context"

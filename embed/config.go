@@ -22,12 +22,12 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/coreos/etcd/discovery"
-	"github.com/coreos/etcd/etcdserver"
-	"github.com/coreos/etcd/pkg/cors"
-	"github.com/coreos/etcd/pkg/netutil"
-	"github.com/coreos/etcd/pkg/transport"
-	"github.com/coreos/etcd/pkg/types"
+	"etcd/discovery"
+	"etcd/etcdserver"
+	"etcd/pkg/cors"
+	"etcd/pkg/netutil"
+	"etcd/pkg/transport"
+	"etcd/pkg/types"
 	"github.com/ghodss/yaml"
 )
 

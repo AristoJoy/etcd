@@ -18,7 +18,7 @@ import (
 	"reflect"
 	"testing"
 
-	pb "github.com/coreos/etcd/raft/raftpb"
+	pb "etcd/raft/raftpb"
 )
 
 func TestUnstableMaybeFirstIndex(t *testing.T) {

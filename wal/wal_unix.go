@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+//go:build !windows
 // +build !windows
 
 package wal
@@ -19,7 +20,7 @@ package wal
 import (
 	"os"
 
-	"github.com/coreos/etcd/pkg/fileutil"
+	"etcd/pkg/fileutil"
 )
 
 func (w *WAL) renameWal(tmpdirpath string) (*WAL, error) {

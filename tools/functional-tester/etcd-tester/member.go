@@ -23,9 +23,9 @@ import (
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 
-	"github.com/coreos/etcd/clientv3"
-	pb "github.com/coreos/etcd/etcdserver/etcdserverpb"
-	"github.com/coreos/etcd/tools/functional-tester/etcd-agent/client"
+	"etcd/clientv3"
+	pb "etcd/etcdserver/etcdserverpb"
+	"etcd/tools/functional-tester/etcd-agent/client"
 )
 
 type member struct {

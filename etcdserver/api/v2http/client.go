@@ -27,18 +27,18 @@ import (
 	"strings"
 	"time"
 
-	etcdErr "github.com/coreos/etcd/error"
-	"github.com/coreos/etcd/etcdserver"
-	"github.com/coreos/etcd/etcdserver/api"
-	"github.com/coreos/etcd/etcdserver/api/v2http/httptypes"
-	"github.com/coreos/etcd/etcdserver/auth"
-	"github.com/coreos/etcd/etcdserver/etcdserverpb"
-	"github.com/coreos/etcd/etcdserver/membership"
-	"github.com/coreos/etcd/etcdserver/stats"
-	"github.com/coreos/etcd/pkg/types"
-	"github.com/coreos/etcd/raft"
-	"github.com/coreos/etcd/store"
-	"github.com/coreos/etcd/version"
+	etcdErr "etcd/error"
+	"etcd/etcdserver"
+	"etcd/etcdserver/api"
+	"etcd/etcdserver/api/v2http/httptypes"
+	"etcd/etcdserver/auth"
+	"etcd/etcdserver/etcdserverpb"
+	"etcd/etcdserver/membership"
+	"etcd/etcdserver/stats"
+	"etcd/pkg/types"
+	"etcd/raft"
+	"etcd/store"
+	"etcd/version"
 	"github.com/coreos/pkg/capnslog"
 	"github.com/jonboulle/clockwork"
 	"github.com/prometheus/client_golang/prometheus"
@@ -76,11 +76,11 @@ func NewClientHandler(server *etcdserver.EtcdServer, timeout time.Duration) http
 	}
 
 	mh := &membersHandler{
-		sec:     sec,
-		server:  server,
-		cluster: server.Cluster(),
-		timeout: timeout,
-		clock:   clockwork.NewRealClock(),
+		sec:                   sec,
+		server:                server,
+		cluster:               server.Cluster(),
+		timeout:               timeout,
+		clock:                 clockwork.NewRealClock(),
 		clientCertAuthEnabled: server.Cfg.ClientCertAuthEnabled,
 	}
 

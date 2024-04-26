@@ -22,7 +22,7 @@ import (
 	"sort"
 	"time"
 
-	"github.com/coreos/etcd/pkg/types"
+	"etcd/pkg/types"
 	"github.com/coreos/pkg/capnslog"
 )
 

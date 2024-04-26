@@ -18,8 +18,8 @@ import (
 	"os"
 	"testing"
 
-	pb "github.com/coreos/etcd/etcdserver/etcdserverpb"
-	"github.com/coreos/etcd/mvcc/backend"
+	pb "etcd/etcdserver/etcdserverpb"
+	"etcd/mvcc/backend"
 	"golang.org/x/crypto/bcrypt"
 	"golang.org/x/net/context"
 )

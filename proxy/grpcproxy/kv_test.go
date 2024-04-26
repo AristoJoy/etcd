@@ -19,10 +19,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/coreos/etcd/clientv3"
-	pb "github.com/coreos/etcd/etcdserver/etcdserverpb"
-	"github.com/coreos/etcd/integration"
-	"github.com/coreos/etcd/pkg/testutil"
+	"etcd/clientv3"
+	pb "etcd/etcdserver/etcdserverpb"
+	"etcd/integration"
+	"etcd/pkg/testutil"
 
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"

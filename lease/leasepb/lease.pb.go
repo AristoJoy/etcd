@@ -22,7 +22,7 @@ import (
 
 	math "math"
 
-	etcdserverpb "github.com/coreos/etcd/etcdserver/etcdserverpb"
+	etcdserverpb "etcd/etcdserver/etcdserverpb"
 
 	io "io"
 )

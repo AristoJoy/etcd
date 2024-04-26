@@ -22,11 +22,11 @@ import (
 	"path"
 	"strings"
 
-	pioutil "github.com/coreos/etcd/pkg/ioutil"
-	"github.com/coreos/etcd/pkg/types"
-	"github.com/coreos/etcd/raft/raftpb"
-	"github.com/coreos/etcd/snap"
-	"github.com/coreos/etcd/version"
+	pioutil "etcd/pkg/ioutil"
+	"etcd/pkg/types"
+	"etcd/raft/raftpb"
+	"etcd/snap"
+	"etcd/version"
 	"golang.org/x/net/context"
 )
 

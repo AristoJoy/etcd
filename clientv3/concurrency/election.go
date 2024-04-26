@@ -18,8 +18,8 @@ import (
 	"errors"
 	"fmt"
 
-	v3 "github.com/coreos/etcd/clientv3"
-	"github.com/coreos/etcd/mvcc/mvccpb"
+	v3 "etcd/clientv3"
+	"etcd/mvcc/mvccpb"
 	"golang.org/x/net/context"
 )
 

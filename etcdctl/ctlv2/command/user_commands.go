@@ -19,8 +19,8 @@ import (
 	"os"
 	"strings"
 
+	"etcd/client"
 	"github.com/bgentry/speakeasy"
-	"github.com/coreos/etcd/client"
 	"github.com/urfave/cli"
 )
 

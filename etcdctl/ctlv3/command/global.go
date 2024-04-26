@@ -22,10 +22,10 @@ import (
 	"strings"
 	"time"
 
+	"etcd/clientv3"
+	"etcd/pkg/flags"
+	"etcd/pkg/transport"
 	"github.com/bgentry/speakeasy"
-	"github.com/coreos/etcd/clientv3"
-	"github.com/coreos/etcd/pkg/flags"
-	"github.com/coreos/etcd/pkg/transport"
 	"github.com/spf13/cobra"
 )
 

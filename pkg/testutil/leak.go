@@ -21,7 +21,7 @@ CheckLeakedGoroutine verifies tests do not leave any leaky
 goroutines. It returns true when there are goroutines still
 running(leaking) after all tests.
 
-	import "github.com/coreos/etcd/pkg/testutil"
+	import "etcd/pkg/testutil"
 
 	func TestMain(m *testing.M) {
 		v := m.Run()
@@ -69,12 +69,12 @@ func AfterTest(t *testing.T) {
 	}
 	var bad string
 	badSubstring := map[string]string{
-		").writeLoop(":                                 "a Transport",
+		").writeLoop(": "a Transport",
 		"created by net/http/httptest.(*Server).Start": "an httptest.Server",
-		"timeoutHandler":                               "a TimeoutHandler",
-		"net.(*netFD).connect(":                        "a timing out dial",
-		").noteClientGone(":                            "a closenotifier sender",
-		").readLoop(":                                  "a Transport",
+		"timeoutHandler":        "a TimeoutHandler",
+		"net.(*netFD).connect(": "a timing out dial",
+		").noteClientGone(":     "a closenotifier sender",
+		").readLoop(":           "a Transport",
 	}
 
 	var stacks string
@@ -111,8 +111,8 @@ func interestingGoroutines() (gs []string) {
 			strings.Contains(stack, "created by testing.RunTests") ||
 			strings.Contains(stack, "testing.Main(") ||
 			strings.Contains(stack, "runtime.goexit") ||
-			strings.Contains(stack, "github.com/coreos/etcd/pkg/testutil.interestingGoroutines") ||
-			strings.Contains(stack, "github.com/coreos/etcd/pkg/logutil.(*MergeLogger).outputLoop") ||
+			strings.Contains(stack, "etcd/pkg/testutil.interestingGoroutines") ||
+			strings.Contains(stack, "etcd/pkg/logutil.(*MergeLogger).outputLoop") ||
 			strings.Contains(stack, "github.com/golang/glog.(*loggingT).flushDaemon") ||
 			strings.Contains(stack, "created by runtime.gc") ||
 			strings.Contains(stack, "runtime.MHeap_Scavenger") {

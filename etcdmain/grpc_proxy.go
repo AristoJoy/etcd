@@ -22,10 +22,10 @@ import (
 	"os"
 	"time"
 
-	"github.com/coreos/etcd/clientv3"
-	pb "github.com/coreos/etcd/etcdserver/etcdserverpb"
-	"github.com/coreos/etcd/pkg/transport"
-	"github.com/coreos/etcd/proxy/grpcproxy"
+	"etcd/clientv3"
+	pb "etcd/etcdserver/etcdserverpb"
+	"etcd/pkg/transport"
+	"etcd/proxy/grpcproxy"
 
 	"github.com/spf13/cobra"
 	"google.golang.org/grpc"

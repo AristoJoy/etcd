@@ -23,9 +23,9 @@ import (
 
 	"golang.org/x/net/context"
 
-	"github.com/coreos/etcd/pkg/netutil"
-	"github.com/coreos/etcd/pkg/transport"
-	"github.com/coreos/etcd/pkg/types"
+	"etcd/pkg/netutil"
+	"etcd/pkg/transport"
+	"etcd/pkg/types"
 )
 
 // ServerConfig holds the configuration of etcd as taken from the command line or discovery.

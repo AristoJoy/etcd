@@ -18,9 +18,9 @@ import (
 	"encoding/json"
 	"path"
 
-	etcderr "github.com/coreos/etcd/error"
-	"github.com/coreos/etcd/etcdserver"
-	"github.com/coreos/etcd/etcdserver/etcdserverpb"
+	etcderr "etcd/error"
+	"etcd/etcdserver"
+	"etcd/etcdserver/etcdserverpb"
 	"golang.org/x/net/context"
 )
 

@@ -19,10 +19,10 @@ import (
 	"testing"
 	"time"
 
-	etcderr "github.com/coreos/etcd/error"
-	"github.com/coreos/etcd/etcdserver"
-	"github.com/coreos/etcd/etcdserver/etcdserverpb"
-	etcdstore "github.com/coreos/etcd/store"
+	etcderr "etcd/error"
+	"etcd/etcdserver"
+	"etcd/etcdserver/etcdserverpb"
+	etcdstore "etcd/store"
 	"golang.org/x/net/context"
 )
 

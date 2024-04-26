@@ -21,10 +21,10 @@ import (
 	"io"
 	"sync"
 
-	"github.com/coreos/etcd/pkg/crc"
-	"github.com/coreos/etcd/pkg/pbutil"
-	"github.com/coreos/etcd/raft/raftpb"
-	"github.com/coreos/etcd/wal/walpb"
+	"etcd/pkg/crc"
+	"etcd/pkg/pbutil"
+	"etcd/raft/raftpb"
+	"etcd/wal/walpb"
 )
 
 const minSectorSize = 512

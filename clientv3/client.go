@@ -24,7 +24,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/coreos/etcd/etcdserver/api/v3rpc/rpctypes"
+	"etcd/etcdserver/api/v3rpc/rpctypes"
 	prometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
 
 	"golang.org/x/net/context"

@@ -17,7 +17,7 @@ package api
 import (
 	"sync"
 
-	"github.com/coreos/etcd/version"
+	"etcd/version"
 	"github.com/coreos/go-semver/semver"
 	"github.com/coreos/pkg/capnslog"
 )

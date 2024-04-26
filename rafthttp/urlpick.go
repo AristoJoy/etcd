@@ -18,7 +18,7 @@ import (
 	"net/url"
 	"sync"
 
-	"github.com/coreos/etcd/pkg/types"
+	"etcd/pkg/types"
 )
 
 type urlPicker struct {

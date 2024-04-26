@@ -17,7 +17,7 @@ package store
 import (
 	"testing"
 
-	etcdErr "github.com/coreos/etcd/error"
+	etcdErr "etcd/error"
 )
 
 // TestEventQueue tests a queue with capacity = 100

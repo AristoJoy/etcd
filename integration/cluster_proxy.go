@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+//go:build cluster_proxy
 // +build cluster_proxy
 
 package integration
@@ -19,9 +20,9 @@ package integration
 import (
 	"sync"
 
-	"github.com/coreos/etcd/clientv3"
-	pb "github.com/coreos/etcd/etcdserver/etcdserverpb"
-	"github.com/coreos/etcd/proxy/grpcproxy"
+	"etcd/clientv3"
+	pb "etcd/etcdserver/etcdserverpb"
+	"etcd/proxy/grpcproxy"
 )
 
 var (

@@ -20,7 +20,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/coreos/etcd/pkg/expect"
+	"etcd/pkg/expect"
 )
 
 func TestCtlV3Lock(t *testing.T) { testCtl(t, testLock) }

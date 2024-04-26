@@ -20,7 +20,7 @@ import (
 
 	"golang.org/x/net/context"
 
-	"github.com/coreos/etcd/clientv3"
+	"etcd/clientv3"
 )
 
 func ExampleMaintenance_status() {

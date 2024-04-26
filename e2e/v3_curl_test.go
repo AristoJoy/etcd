@@ -18,8 +18,8 @@ import (
 	"encoding/json"
 	"testing"
 
-	pb "github.com/coreos/etcd/etcdserver/etcdserverpb"
-	"github.com/coreos/etcd/pkg/testutil"
+	pb "etcd/etcdserver/etcdserverpb"
+	"etcd/pkg/testutil"
 )
 
 func TestV3CurlPutGetNoTLS(t *testing.T)     { testCurlPutGetGRPCGateway(t, &configNoTLS) }

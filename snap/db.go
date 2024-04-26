@@ -21,7 +21,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/coreos/etcd/pkg/fileutil"
+	"etcd/pkg/fileutil"
 )
 
 // SaveDBFrom saves snapshot of the database from the given reader. It

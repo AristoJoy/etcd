@@ -27,9 +27,9 @@ import (
 	"syscall"
 	"time"
 
+	"etcd/client"
+	"etcd/pkg/transport"
 	"github.com/bgentry/speakeasy"
-	"github.com/coreos/etcd/client"
-	"github.com/coreos/etcd/pkg/transport"
 	"github.com/urfave/cli"
 	"golang.org/x/net/context"
 )

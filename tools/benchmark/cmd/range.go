@@ -20,8 +20,8 @@ import (
 	"os"
 	"time"
 
-	v3 "github.com/coreos/etcd/clientv3"
-	"github.com/coreos/etcd/pkg/report"
+	v3 "etcd/clientv3"
+	"etcd/pkg/report"
 
 	"github.com/spf13/cobra"
 	"golang.org/x/net/context"

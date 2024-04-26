@@ -19,11 +19,11 @@ import (
 	"testing"
 	"time"
 
-	"github.com/coreos/etcd/clientv3"
-	"github.com/coreos/etcd/etcdserver/api/v3rpc"
-	"github.com/coreos/etcd/etcdserver/api/v3rpc/rpctypes"
-	"github.com/coreos/etcd/integration"
-	"github.com/coreos/etcd/pkg/testutil"
+	"etcd/clientv3"
+	"etcd/etcdserver/api/v3rpc"
+	"etcd/etcdserver/api/v3rpc/rpctypes"
+	"etcd/integration"
+	"etcd/pkg/testutil"
 	"golang.org/x/net/context"
 )
 

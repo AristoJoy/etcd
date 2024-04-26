@@ -18,9 +18,9 @@ import (
 	"sync"
 	"time"
 
-	"github.com/coreos/etcd/lease"
-	"github.com/coreos/etcd/mvcc/backend"
-	"github.com/coreos/etcd/mvcc/mvccpb"
+	"etcd/lease"
+	"etcd/mvcc/backend"
+	"etcd/mvcc/mvccpb"
 )
 
 const (

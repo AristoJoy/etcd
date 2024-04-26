@@ -22,10 +22,10 @@ import (
 	"net/http"
 	"time"
 
-	pb "github.com/coreos/etcd/etcdserver/etcdserverpb"
-	"github.com/coreos/etcd/lease"
-	"github.com/coreos/etcd/lease/leasepb"
-	"github.com/coreos/etcd/pkg/httputil"
+	pb "etcd/etcdserver/etcdserverpb"
+	"etcd/lease"
+	"etcd/lease/leasepb"
+	"etcd/pkg/httputil"
 	"golang.org/x/net/context"
 )
 

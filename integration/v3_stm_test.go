@@ -20,8 +20,8 @@ import (
 	"strconv"
 	"testing"
 
-	v3 "github.com/coreos/etcd/clientv3"
-	"github.com/coreos/etcd/clientv3/concurrency"
+	v3 "etcd/clientv3"
+	"etcd/clientv3/concurrency"
 	"golang.org/x/net/context"
 )
 

@@ -25,9 +25,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/coreos/etcd/pkg/types"
-	"github.com/coreos/etcd/raft/raftpb"
-	"github.com/coreos/etcd/snap"
+	"etcd/pkg/types"
+	"etcd/raft/raftpb"
+	"etcd/snap"
 )
 
 type strReaderCloser struct{ *strings.Reader }

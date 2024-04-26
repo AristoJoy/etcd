@@ -20,12 +20,12 @@ import (
 	"strings"
 	"time"
 
-	etcdErr "github.com/coreos/etcd/error"
-	"github.com/coreos/etcd/etcdserver"
-	"github.com/coreos/etcd/etcdserver/api/v2http/httptypes"
+	etcdErr "etcd/error"
+	"etcd/etcdserver"
+	"etcd/etcdserver/api/v2http/httptypes"
 
-	"github.com/coreos/etcd/etcdserver/auth"
-	"github.com/coreos/etcd/pkg/logutil"
+	"etcd/etcdserver/auth"
+	"etcd/pkg/logutil"
 	"github.com/coreos/pkg/capnslog"
 )
 

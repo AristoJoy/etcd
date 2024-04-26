@@ -15,9 +15,9 @@
 package grpcproxy
 
 import (
-	"github.com/coreos/etcd/clientv3"
-	pb "github.com/coreos/etcd/etcdserver/etcdserverpb"
-	"github.com/coreos/etcd/proxy/grpcproxy/cache"
+	"etcd/clientv3"
+	pb "etcd/etcdserver/etcdserverpb"
+	"etcd/proxy/grpcproxy/cache"
 
 	"golang.org/x/net/context"
 )

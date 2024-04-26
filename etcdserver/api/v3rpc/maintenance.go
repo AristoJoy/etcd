@@ -18,13 +18,13 @@ import (
 	"crypto/sha256"
 	"io"
 
-	"github.com/coreos/etcd/auth"
-	"github.com/coreos/etcd/etcdserver"
-	pb "github.com/coreos/etcd/etcdserver/etcdserverpb"
-	"github.com/coreos/etcd/mvcc"
-	"github.com/coreos/etcd/mvcc/backend"
-	"github.com/coreos/etcd/pkg/types"
-	"github.com/coreos/etcd/version"
+	"etcd/auth"
+	"etcd/etcdserver"
+	pb "etcd/etcdserver/etcdserverpb"
+	"etcd/mvcc"
+	"etcd/mvcc/backend"
+	"etcd/pkg/types"
+	"etcd/version"
 	"golang.org/x/net/context"
 )
 

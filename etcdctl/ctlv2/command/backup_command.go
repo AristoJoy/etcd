@@ -20,13 +20,13 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/coreos/etcd/etcdserver/etcdserverpb"
-	"github.com/coreos/etcd/pkg/fileutil"
-	"github.com/coreos/etcd/pkg/idutil"
-	"github.com/coreos/etcd/pkg/pbutil"
-	"github.com/coreos/etcd/snap"
-	"github.com/coreos/etcd/wal"
-	"github.com/coreos/etcd/wal/walpb"
+	"etcd/etcdserver/etcdserverpb"
+	"etcd/pkg/fileutil"
+	"etcd/pkg/idutil"
+	"etcd/pkg/pbutil"
+	"etcd/snap"
+	"etcd/wal"
+	"etcd/wal/walpb"
 	"github.com/urfave/cli"
 )
 

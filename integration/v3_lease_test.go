@@ -22,10 +22,10 @@ import (
 	"golang.org/x/net/context"
 	"google.golang.org/grpc/metadata"
 
-	"github.com/coreos/etcd/etcdserver/api/v3rpc/rpctypes"
-	pb "github.com/coreos/etcd/etcdserver/etcdserverpb"
-	"github.com/coreos/etcd/mvcc/mvccpb"
-	"github.com/coreos/etcd/pkg/testutil"
+	"etcd/etcdserver/api/v3rpc/rpctypes"
+	pb "etcd/etcdserver/etcdserverpb"
+	"etcd/mvcc/mvccpb"
+	"etcd/pkg/testutil"
 )
 
 // TestV3LeasePrmote ensures the newly elected leader can promote itself
@@ -235,14 +235,14 @@ func TestV3LeaseExists(t *testing.T) {
 
 // TestV3LeaseRenewStress keeps creating lease and renewing it immediately to ensure the renewal goes through.
 // it was oberserved that the immediate lease renewal after granting a lease from follower resulted lease not found.
-// related issue https://github.com/coreos/etcd/issues/6978
+// related issue https://etcd/issues/6978
 func TestV3LeaseRenewStress(t *testing.T) {
 	testLeaseStress(t, stressLeaseRenew)
 }
 
 // TestV3LeaseTimeToLiveStress keeps creating lease and retriving it immediately to ensure the lease can be retrived.
 // it was oberserved that the immediate lease retrival after granting a lease from follower resulted lease not found.
-// related issue https://github.com/coreos/etcd/issues/6978
+// related issue https://etcd/issues/6978
 func TestV3LeaseTimeToLiveStress(t *testing.T) {
 	testLeaseStress(t, stressLeaseTimeToLive)
 }
@@ -336,7 +336,7 @@ func TestV3PutOnNonExistLease(t *testing.T) {
 
 // TestV3GetNonExistLease tests the case where the non exist lease is report as lease not found error using LeaseTimeToLive()
 // A bug was found when a non leader etcd server returns nil instead of lease not found error which caues the server to crash.
-// related issue https://github.com/coreos/etcd/issues/6537
+// related issue https://etcd/issues/6537
 func TestV3GetNonExistLease(t *testing.T) {
 	defer testutil.AfterTest(t)
 	clus := NewClusterV3(t, &ClusterConfig{Size: 3})

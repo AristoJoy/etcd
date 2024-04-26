@@ -17,7 +17,7 @@ package concurrency
 import (
 	"time"
 
-	v3 "github.com/coreos/etcd/clientv3"
+	v3 "etcd/clientv3"
 	"golang.org/x/net/context"
 )
 

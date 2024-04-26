@@ -23,10 +23,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/coreos/etcd/etcdserver/api/v3rpc"
-	pb "github.com/coreos/etcd/etcdserver/etcdserverpb"
-	"github.com/coreos/etcd/mvcc/mvccpb"
-	"github.com/coreos/etcd/pkg/testutil"
+	"etcd/etcdserver/api/v3rpc"
+	pb "etcd/etcdserver/etcdserverpb"
+	"etcd/mvcc/mvccpb"
+	"etcd/pkg/testutil"
 	"golang.org/x/net/context"
 )
 
@@ -777,9 +777,11 @@ func testV3WatchMultipleEventsTxn(t *testing.T, startRev int64) {
 
 type eventsSortByKey []*mvccpb.Event
 
-func (evs eventsSortByKey) Len() int           { return len(evs) }
-func (evs eventsSortByKey) Swap(i, j int)      { evs[i], evs[j] = evs[j], evs[i] }
-func (evs eventsSortByKey) Less(i, j int) bool { return bytes.Compare(evs[i].Kv.Key, evs[j].Kv.Key) < 0 }
+func (evs eventsSortByKey) Len() int      { return len(evs) }
+func (evs eventsSortByKey) Swap(i, j int) { evs[i], evs[j] = evs[j], evs[i] }
+func (evs eventsSortByKey) Less(i, j int) bool {
+	return bytes.Compare(evs[i].Kv.Key, evs[j].Kv.Key) < 0
+}
 
 func TestV3WatchMultipleEventsPutUnsynced(t *testing.T) {
 	defer testutil.AfterTest(t)

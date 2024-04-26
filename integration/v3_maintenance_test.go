@@ -20,8 +20,8 @@ import (
 
 	"google.golang.org/grpc"
 
-	pb "github.com/coreos/etcd/etcdserver/etcdserverpb"
-	"github.com/coreos/etcd/pkg/testutil"
+	pb "etcd/etcdserver/etcdserverpb"
+	"etcd/pkg/testutil"
 	"golang.org/x/net/context"
 )
 

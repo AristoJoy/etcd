@@ -19,9 +19,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/coreos/etcd/clientv3"
-	"github.com/coreos/etcd/integration"
-	"github.com/coreos/etcd/pkg/testutil"
+	"etcd/clientv3"
+	"etcd/integration"
+	"etcd/pkg/testutil"
 	"golang.org/x/net/context"
 )
 
