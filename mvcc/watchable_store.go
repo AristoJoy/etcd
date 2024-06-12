@@ -272,7 +272,7 @@ func (s *watchableStore) syncWatchersLoop() {
 		syncDuration := time.Since(st)
 
 		waitDuration := 100 * time.Millisecond
-		// more work pending?
+		// more work pending? 还存在没有同步的watcher，则睡眠时间为同步时延
 		if unsyncedWatchers != 0 && lastUnsyncedWatchers > unsyncedWatchers {
 			// be fair to other store operations by yielding time taken
 			waitDuration = syncDuration
@@ -300,6 +300,7 @@ func (s *watchableStore) syncVictimsLoop() {
 		s.mu.Unlock()
 
 		var tickc <-chan time.Time
+		// 如果还有victim，则睡眠10ms后继续同步，否则进入下面select等待
 		if !isEmpty {
 			tickc = time.After(10 * time.Millisecond)
 		}
@@ -464,6 +465,7 @@ func kvsToEvents(wg *watcherGroup, revs, vals [][]byte) (evs []mvccpb.Event) {
 		if isTombstone(revs[i]) {
 			ty = mvccpb.DELETE
 			// patch in mod revision so watchers won't skip
+			// 原因是删除操作的KeyValue只存了key值，其他属性没有赋值，所以需要从事件中恢复
 			kv.ModRevision = bytesToRev(revs[i]).main
 		}
 		evs = append(evs, mvccpb.Event{Kv: &kv, Type: ty})

@@ -22,6 +22,9 @@ import (
 	"etcd/pkg/fileutil"
 )
 
+/**
+解析wal路径路径，校验文件序列工具类
+*/
 var (
 	badWalName = errors.New("bad wal name")
 )

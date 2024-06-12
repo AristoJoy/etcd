@@ -34,6 +34,7 @@ import (
 	"github.com/coreos/pkg/capnslog"
 )
 
+// 日志记录中的类型，其中Type字段表示该Record的类型，取值可以是以下几种
 const (
 	metadataType int64 = iota + 1
 	entryType
@@ -97,6 +98,7 @@ func Create(dirpath string, metadata []byte) (*WAL, error) {
 	}
 
 	// keep temporary wal directory so WAL initialization appears atomic
+	// 先使用临时目录完成初始化操作再将其重命名的方式，主要是为了让整个初始化过程看上去是一个原子操作。
 	tmpdirpath := filepath.Clean(dirpath) + ".tmp"
 	if fileutil.Exist(tmpdirpath) {
 		if err := os.RemoveAll(tmpdirpath); err != nil {
@@ -115,6 +117,7 @@ func Create(dirpath string, metadata []byte) (*WAL, error) {
 	if _, err = f.Seek(0, os.SEEK_END); err != nil {
 		return nil, err
 	}
+	// 预分配文件，大小为SegmentSizeBytes（64MB）
 	if err = fileutil.Preallocate(f.File, SegmentSizeBytes, true); err != nil {
 		return nil, err
 	}
@@ -137,7 +140,7 @@ func Create(dirpath string, metadata []byte) (*WAL, error) {
 	if err = w.SaveSnapshot(walpb.Snapshot{}); err != nil {
 		return nil, err
 	}
-
+	// 之前以.tmp结尾的文件，初始化完成之后重命名
 	if w, err = w.renameWal(tmpdirpath); err != nil {
 		return nil, err
 	}
@@ -147,6 +150,7 @@ func Create(dirpath string, metadata []byte) (*WAL, error) {
 	if perr != nil {
 		return nil, perr
 	}
+	// 将parent dir 进行同步到磁盘
 	if perr = fileutil.Fsync(pdir); perr != nil {
 		return nil, perr
 	}
