@@ -24,6 +24,7 @@ import (
 )
 
 // Handler for a http based key-value store backed by raft
+// httpapi 是一个 http server，可以理解为低配版客户端模块.
 type httpKVAPI struct {
 	store       *kvstore
 	confChangeC chan<- raftpb.ConfChange

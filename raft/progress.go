@@ -132,6 +132,7 @@ func (pr *Progress) maybeDecrTo(rejected, last uint64) bool {
 	if pr.State == ProgressStateReplicate {
 		// the rejection must be stale if the progress has matched and "rejected"
 		// is smaller than "match".
+		// 过时了
 		if rejected <= pr.Match {
 			return false
 		}
@@ -176,6 +177,7 @@ func (pr *Progress) snapshotFailure() { pr.PendingSnapshot = 0 }
 
 // needSnapshotAbort returns true if snapshot progress's Match
 // is equal or higher than the pendingSnapshot.
+// 当前状态为快照态，且快照的索引已经过时
 func (pr *Progress) needSnapshotAbort() bool {
 	return pr.State == ProgressStateSnapshot && pr.Match >= pr.PendingSnapshot
 }

@@ -34,9 +34,13 @@ const noLimit = math.MaxUint64
 
 // Possible values for StateType.
 const (
+	// 跟随者
 	StateFollower StateType = iota
+	// 候选者 for vote
 	StateCandidate
+	// 领导者
 	StateLeader
+	// 预竞选候选者 for preVote
 	StatePreCandidate
 	numStates
 )
@@ -95,9 +99,13 @@ type CampaignType string
 type StateType uint64
 
 var stmap = [...]string{
+	// 跟随者
 	"StateFollower",
+	// 候选者 for vote
 	"StateCandidate",
+	// 领导者
 	"StateLeader",
+	// 预竞选候选者
 	"StatePreCandidate",
 }
 
@@ -207,57 +215,76 @@ func (c *Config) validate() error {
 }
 
 type raft struct {
+	// 节点id
 	id uint64
-
+	// 节点任期
 	Term uint64
+	// 被投票的节点
 	Vote uint64
 
 	readStates []ReadState
 
 	// the log
+	// 日志模块
 	raftLog *raftLog
 
+	// 最大的窗口
 	maxInflight int
-	maxMsgSize  uint64
-	prs         map[uint64]*Progress
+	// 消息最大大小
+	maxMsgSize uint64
+	// follower进度
+	prs map[uint64]*Progress
 
+	// 当前节点身份
 	state StateType
 
+	// 该map存放哪些节点投票给了本节点
 	votes map[uint64]bool
-
+	// 当前节点需要发送的消息，最终会通过 Ready 结构体传给应用层进行发送
 	msgs []pb.Message
 
 	// the leader id
+	// 领导者id
 	lead uint64
 	// leadTransferee is id of the leader transfer target when its value is not zero.
 	// Follow the procedure defined in raft thesis 3.10.
 	leadTransferee uint64
 	// New configuration is ignored if there exists unapplied configuration.
+	// 如果存在未应用的配置，那么新的配置将会被忽略
 	pendingConf bool
 
+	// 挂起的读请求队列
 	readOnly *readOnly
 
 	// number of ticks since it reached last electionTimeout when it is leader
 	// or candidate.
 	// number of ticks since it reached last electionTimeout or received a
 	// valid message from current leader when it is a follower.
+	// 选举计时
 	electionElapsed int
 
 	// number of ticks since it reached last heartbeatTimeout.
 	// only leader keeps heartbeatElapsed.
+	// 心跳计时
 	heartbeatElapsed int
 
 	checkQuorum bool
-	preVote     bool
+	// 标识当前节点是否处于预竞选状态
+	preVote bool
 
+	// leader 广播心跳的时间间隔
 	heartbeatTimeout int
-	electionTimeout  int
+	// candidate/follower 进行选举的时间间隔
+	electionTimeout int
 	// randomizedElectionTimeout is a random number between
 	// [electiontimeout, 2 * electiontimeout - 1]. It gets reset
 	// when raft changes its state to follower or candidate.
+	// 新增随机扰动后的选举时间间隔，范围在 [electionTimeout, 2* electionTimeout - 1] 之间，每次切换节点身份时，这个随机扰动值会被重置一次
 	randomizedElectionTimeout int
 
+	// 节点的定时处理函数，不同角色的处理函数不同，leader 是广播心跳的 tickHeartbeat 函数，follower 和 candidate 是发起竞选的 tickElection 函数
 	tick func()
+	// 节点的状态机处理函数，不同角色的状态机函数不同，分为 stepLeader、stepCandidate 和 stepFollower 三类
 	step stepFunc
 
 	logger Logger
@@ -361,6 +388,7 @@ func (r *raft) send(m pb.Message) {
 			m.Term = r.Term
 		}
 	}
+	// 注意这里只是添加到msgs中
 	r.msgs = append(r.msgs, m)
 }
 
@@ -1158,6 +1186,7 @@ func (r *raft) addNode(id uint64) {
 		return
 	}
 
+	// 设置match = 0, next = lastIndex + 1
 	r.setProgress(id, 0, r.raftLog.lastIndex()+1)
 }
 

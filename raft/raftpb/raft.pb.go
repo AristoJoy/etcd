@@ -43,8 +43,11 @@ const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 type EntryType int32
 
 const (
-	EntryNormal     EntryType = 0
+	// 正常日志类型
+	EntryNormal EntryType = 0
+	// 配置变更日志
 	EntryConfChange EntryType = 1
+	// 配置变更日志V2 新版本中存在
 )
 
 var EntryType_name = map[int32]string{
@@ -77,15 +80,24 @@ func (EntryType) EnumDescriptor() ([]byte, []int) { return fileDescriptorRaft, [
 type MessageType int32
 
 const (
-	MsgHup            MessageType = 0
-	MsgBeat           MessageType = 1
-	MsgProp           MessageType = 2
-	MsgApp            MessageType = 3
-	MsgAppResp        MessageType = 4
-	MsgVote           MessageType = 5
-	MsgVoteResp       MessageType = 6
-	MsgSnap           MessageType = 7
-	MsgHeartbeat      MessageType = 8
+	// 本节点要选举
+	MsgHup MessageType = 0
+	// 不用于节点间通信，仅用于leader内部心跳时间到了，让leader发心跳消息
+	MsgBeat MessageType = 1
+	// 用户向raft提交数据
+	MsgProp MessageType = 2
+	// leader向集群其他节点同步数据 append消息
+	MsgApp MessageType = 3
+	// append消息的应答
+	MsgAppResp MessageType = 4
+	// 投票消息
+	MsgVote MessageType = 5
+	// 投票消息应答
+	MsgVoteResp MessageType = 6
+	MsgSnap     MessageType = 7
+	// 心跳消息
+	MsgHeartbeat MessageType = 8
+	// 心跳信息应答
 	MsgHeartbeatResp  MessageType = 9
 	MsgUnreachable    MessageType = 10
 	MsgSnapStatus     MessageType = 11
@@ -197,11 +209,15 @@ func (x *ConfChangeType) UnmarshalJSON(data []byte) error {
 func (ConfChangeType) EnumDescriptor() ([]byte, []int) { return fileDescriptorRaft, []int{2} }
 
 type Entry struct {
-	Term             uint64    `protobuf:"varint,2,opt,name=Term" json:"Term"`
-	Index            uint64    `protobuf:"varint,3,opt,name=Index" json:"Index"`
-	Type             EntryType `protobuf:"varint,1,opt,name=Type,enum=raftpb.EntryType" json:"Type"`
-	Data             []byte    `protobuf:"bytes,4,opt,name=Data" json:"Data,omitempty"`
-	XXX_unrecognized []byte    `json:"-"`
+	// 任期
+	Term uint64 `protobuf:"varint,2,opt,name=Term" json:"Term"`
+	// 索引
+	Index uint64 `protobuf:"varint,3,opt,name=Index" json:"Index"`
+	// 日志类型
+	Type EntryType `protobuf:"varint,1,opt,name=Type,enum=raftpb.EntryType" json:"Type"`
+	// 日志数据
+	Data             []byte `protobuf:"bytes,4,opt,name=Data" json:"Data,omitempty"`
+	XXX_unrecognized []byte `json:"-"`
 }
 
 func (m *Entry) Reset()                    { *m = Entry{} }
@@ -233,19 +249,33 @@ func (*Snapshot) ProtoMessage()               {}
 func (*Snapshot) Descriptor() ([]byte, []int) { return fileDescriptorRaft, []int{2} }
 
 type Message struct {
-	Type             MessageType `protobuf:"varint,1,opt,name=type,enum=raftpb.MessageType" json:"type"`
-	To               uint64      `protobuf:"varint,2,opt,name=to" json:"to"`
-	From             uint64      `protobuf:"varint,3,opt,name=from" json:"from"`
-	Term             uint64      `protobuf:"varint,4,opt,name=term" json:"term"`
-	LogTerm          uint64      `protobuf:"varint,5,opt,name=logTerm" json:"logTerm"`
-	Index            uint64      `protobuf:"varint,6,opt,name=index" json:"index"`
-	Entries          []Entry     `protobuf:"bytes,7,rep,name=entries" json:"entries"`
-	Commit           uint64      `protobuf:"varint,8,opt,name=commit" json:"commit"`
-	Snapshot         Snapshot    `protobuf:"bytes,9,opt,name=snapshot" json:"snapshot"`
-	Reject           bool        `protobuf:"varint,10,opt,name=reject" json:"reject"`
-	RejectHint       uint64      `protobuf:"varint,11,opt,name=rejectHint" json:"rejectHint"`
-	Context          []byte      `protobuf:"bytes,12,opt,name=context" json:"context,omitempty"`
-	XXX_unrecognized []byte      `json:"-"`
+	// 消息类型
+	Type MessageType `protobuf:"varint,1,opt,name=type,enum=raftpb.MessageType" json:"type"`
+	// 消息的起点和终点
+	To   uint64 `protobuf:"varint,2,opt,name=to" json:"to"`
+	From uint64 `protobuf:"varint,3,opt,name=from" json:"from"`
+	// 消息发送方当前的任期
+	Term uint64 `protobuf:"varint,4,opt,name=term" json:"term"`
+	// logTerm is generally used for appending Raft logs to followers. For example,
+	// (type=MsgApp,index=100,logTerm=5) means leader appends entries starting at
+	// index=101, and the term of entry at index 100 is 5.
+	// (type=MsgAppResp,reject=true,index=100,logTerm=5) means follower rejects some
+	// entries from its leader as it already has an entry with term 5 at index 100.
+	// 用于append请求和响应消息，表示上一条日志的任期和索引
+	LogTerm uint64 `protobuf:"varint,5,opt,name=logTerm" json:"logTerm"`
+	Index   uint64 `protobuf:"varint,6,opt,name=index" json:"index"`
+	// 待完成同步的预写日志
+	Entries []Entry `protobuf:"bytes,7,rep,name=entries" json:"entries"`
+	// leaderCommit
+	Commit uint64 `protobuf:"varint,8,opt,name=commit" json:"commit"`
+	// 快照
+	Snapshot Snapshot `protobuf:"bytes,9,opt,name=snapshot" json:"snapshot"`
+	// 标识响应结果为拒绝或赞同.  节点响应竞选投票或者响应日志同步时会使用到此字段
+	Reject bool `protobuf:"varint,10,opt,name=reject" json:"reject"`
+	// 节点上一条预写日志的索引. 节点响应日志同步时使用到此字段.
+	RejectHint       uint64 `protobuf:"varint,11,opt,name=rejectHint" json:"rejectHint"`
+	Context          []byte `protobuf:"bytes,12,opt,name=context" json:"context,omitempty"`
+	XXX_unrecognized []byte `json:"-"`
 }
 
 func (m *Message) Reset()                    { *m = Message{} }

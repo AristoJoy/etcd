@@ -38,13 +38,13 @@ import (
 
 // A key-value stream backed by raft
 type raftNode struct {
-	proposeC    <-chan string            // proposed messages (k,v)
-	confChangeC <-chan raftpb.ConfChange // proposed cluster config changes
-	commitC     chan<- *string           // entries committed to log (k,v)
+	proposeC    <-chan string            // proposed messages (k,v) 用于接收客户端发送的写请求
+	confChangeC <-chan raftpb.ConfChange // proposed cluster config changes 用于接收客户端发送的配置变更请求
+	commitC     chan<- *string           // entries committed to log (k,v) 用于将已提交的日志应用到数据状态机
 	errorC      chan<- error             // errors from raft session
 
 	id          int      // client ID for raft session
-	peers       []string // raft peer URLs
+	peers       []string // raft peer URLs	同一集群内其他 raft 节点的标识信息
 	join        bool     // node is joining an existing cluster
 	waldir      string   // path to WAL directory
 	snapdir     string   // path to snapshot directory
@@ -53,21 +53,21 @@ type raftNode struct {
 
 	confState     raftpb.ConfState
 	snapshotIndex uint64
-	appliedIndex  uint64
+	appliedIndex  uint64 // 本节点已应用到状态机的日志索引
 
 	// raft backing for the commit/error channel
-	node        raft.Node
-	raftStorage *raft.MemoryStorage
+	node        raft.Node           // 算法层入口
+	raftStorage *raft.MemoryStorage // 持久化预写日志存储模块
 	wal         *wal.WAL
 
 	snapshotter      *snap.Snapshotter
 	snapshotterReady chan *snap.Snapshotter // signals when snapshotter is ready
 
 	snapCount uint64
-	transport *rafthttp.Transport
-	stopc     chan struct{} // signals proposal channel closed
-	httpstopc chan struct{} // signals http server to shutdown
-	httpdonec chan struct{} // signals http server shutdown complete
+	transport *rafthttp.Transport // raft 集群通信模块
+	stopc     chan struct{}       // signals proposal channel closed
+	httpstopc chan struct{}       // signals http server to shutdown
+	httpdonec chan struct{}       // signals http server shutdown complete
 }
 
 var defaultSnapCount uint64 = 10000
@@ -125,6 +125,7 @@ func (rc *raftNode) entriesToApply(ents []raftpb.Entry) (nents []raftpb.Entry) {
 		return
 	}
 	firstIdx := ents[0].Index
+	// 跨过部分日志进行应用，报错
 	if firstIdx > rc.appliedIndex+1 {
 		log.Fatalf("first index of committed entry[%d] should <= progress.appliedIndex[%d] 1", firstIdx, rc.appliedIndex)
 	}
@@ -139,6 +140,7 @@ func (rc *raftNode) entriesToApply(ents []raftpb.Entry) (nents []raftpb.Entry) {
 func (rc *raftNode) publishEntries(ents []raftpb.Entry) bool {
 	for i := range ents {
 		switch ents[i].Type {
+		// 倘若已提交日志是正常的写数据请求，则通过 commitC 将数据传送给 kvstore
 		case raftpb.EntryNormal:
 			if len(ents[i].Data) == 0 {
 				// ignore empty messages
@@ -151,15 +153,18 @@ func (rc *raftNode) publishEntries(ents []raftpb.Entry) bool {
 				return false
 			}
 
+			// 倘若已提交日志是配置变更请求，则需要调用 Node.ApplyConfChange 方法，将其真正作用于算法层.
 		case raftpb.EntryConfChange:
 			var cc raftpb.ConfChange
 			cc.Unmarshal(ents[i].Data)
 			rc.confState = *rc.node.ApplyConfChange(cc)
 			switch cc.Type {
+			// 添加节点
 			case raftpb.ConfChangeAddNode:
 				if len(cc.Context) > 0 {
 					rc.transport.AddPeer(types.ID(cc.NodeID), []string{string(cc.Context)})
 				}
+				// 移除节点
 			case raftpb.ConfChangeRemoveNode:
 				if cc.NodeID == uint64(rc.id) {
 					log.Println("I've been removed from the cluster! Shutting down.")
@@ -170,9 +175,11 @@ func (rc *raftNode) publishEntries(ents []raftpb.Entry) bool {
 		}
 
 		// after commit, update appliedIndex
+		// 提交后更新索引
 		rc.appliedIndex = ents[i].Index
 
 		// special nil commit to signal replay has finished
+		// 发送nil提交给commitC通道，
 		if ents[i].Index == rc.lastIndex {
 			select {
 			case rc.commitC <- nil:
@@ -265,10 +272,13 @@ func (rc *raftNode) startRaft() {
 	oldwal := wal.Exist(rc.waldir)
 	rc.wal = rc.replayWAL()
 
+	// 1. 获取集群内其他 raft 节点的信息
 	rpeers := make([]raft.Peer, len(rc.peers))
 	for i := range rpeers {
 		rpeers[i] = raft.Peer{ID: uint64(i + 1)}
 	}
+	// 2. 创建一份 raft 节点配置，其中 leader 的心跳时间间隔默认为 tick，
+	// follower/candidate 的选举时间间隔默认为 10 个 tick
 	c := &raft.Config{
 		ID:              uint64(rc.id),
 		ElectionTick:    10,
@@ -285,6 +295,7 @@ func (rc *raftNode) startRaft() {
 		if rc.join {
 			startPeers = nil
 		}
+		// 3. 启动算法层的一个 Node
 		rc.node = raft.StartNode(c, startPeers)
 	}
 
@@ -300,6 +311,7 @@ func (rc *raftNode) startRaft() {
 		ErrorC:      make(chan error),
 	}
 
+	// 4. 启动通信模块
 	rc.transport.Start()
 	for i := range rc.peers {
 		if i+1 != rc.id {
@@ -308,6 +320,7 @@ func (rc *raftNode) startRaft() {
 	}
 
 	go rc.serveRaft()
+	// 5. 异步开启 raftNode 的主循环
 	go rc.serveChannels()
 }
 
@@ -386,6 +399,7 @@ func (rc *raftNode) serveChannels() {
 
 	defer rc.wal.Close()
 
+	// raftNode 会启动一个定时器，每个 tick 默认为 100ms
 	ticker := time.NewTicker(100 * time.Millisecond)
 	defer ticker.Stop()
 
@@ -393,6 +407,8 @@ func (rc *raftNode) serveChannels() {
 	go func() {
 		var confChangeCount uint64 = 0
 
+		// raftNode 会持续监听 proposeC 和 confChangeC 两个 channel，
+		// 从而接收到来自客户端的写数据和配置变更请求，然后调用 Node 接口的 api 将其发送给算法层
 		for rc.proposeC != nil && rc.confChangeC != nil {
 			select {
 			case prop, ok := <-rc.proposeC:
@@ -420,6 +436,7 @@ func (rc *raftNode) serveChannels() {
 	// event loop on raft state machine updates
 	for {
 		select {
+		// 定时调用 Node.Tick 方法驱动算法层执行定时函数
 		case <-ticker.C:
 			rc.node.Tick()
 
@@ -431,13 +448,19 @@ func (rc *raftNode) serveChannels() {
 				rc.raftStorage.ApplySnapshot(rd.Snapshot)
 				rc.publishSnapshot(rd.Snapshot)
 			}
+			// 当应用层通过 Node.Ready 方法接收到来自算法层的处理结果后，
+			// raftNode 需要将待持久化的预写日志（Ready.Entries）进行持久化
 			rc.raftStorage.Append(rd.Entries)
+			// 调用通信模块为算法层执行消息发送动作（Ready.Messages）
 			rc.transport.Send(rd.Messages)
+			// raftNode 将已提交日志应用到数据状态机的过程
 			if ok := rc.publishEntries(rc.entriesToApply(rd.CommittedEntries)); !ok {
 				rc.stop()
 				return
 			}
+			// todo-zh 快照压缩
 			rc.maybeTriggerSnapshot()
+			// 调用 Node.Advance 方法对算法层进行响应
 			rc.node.Advance()
 
 		case err := <-rc.transport.ErrorC:

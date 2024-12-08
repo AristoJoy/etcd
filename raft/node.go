@@ -53,11 +53,14 @@ type Ready struct {
 	// The current volatile state of a Node.
 	// SoftState will be nil if there is no update.
 	// It is not required to consume or store SoftState.
+	// 软状态是易失性的，包括：当前集群leader、当前节点状态
 	*SoftState
 
 	// The current state of a Node to be saved to stable storage BEFORE
 	// Messages are sent.
 	// HardState will be equal to empty state if there is no update.
+	// 硬状态需要被保存，包括：节点当前Term、Vote、Commit
+	// 如果当前这部分没有更新，则等于空状态
 	pb.HardState
 
 	// ReadStates can be used for node to serve linearizable read requests locally
@@ -68,6 +71,7 @@ type Ready struct {
 
 	// Entries specifies entries to be saved to stable storage BEFORE
 	// Messages are sent.
+	// 需要在消息发送之前被写入到持久化存储中的entries数据数组
 	Entries []pb.Entry
 
 	// Snapshot specifies the snapshot to be saved to stable storage.
@@ -76,12 +80,14 @@ type Ready struct {
 	// CommittedEntries specifies entries to be committed to a
 	// store/state-machine. These have previously been committed to stable
 	// store.
+	// 本轮算法层已提交的预写日志，需要传输到应用层，由应用层将其应用到状态机.
 	CommittedEntries []pb.Entry
 
 	// Messages specifies outbound messages to be sent AFTER Entries are
 	// committed to stable storage.
 	// If it contains a MsgSnap message, the application MUST report back to raft
 	// when the snapshot has been received or has failed by calling ReportSnapshot.
+	// 在entries被写入持久化存储中以后，需要发送出去的数据
 	Messages []pb.Message
 }
 
@@ -106,13 +112,17 @@ func (rd Ready) containsUpdates() bool {
 }
 
 // Node represents a node in a raft cluster.
+// Node 是算法层中 raft 节点的抽象，也是应用层与算法层交互的唯一入口
 type Node interface {
 	// Tick increments the internal logical clock for the Node by a single tick. Election
 	// timeouts and heartbeat timeouts are in units of ticks.
+	// 传送定时驱动信号，每次调用 Tick 方法的时间间隔是固定的，称为一个 tick，是 raft 节点的最小计时单位，
+	// 后续 leader 节点的心跳计时和 leader/candidate 的选举计时也都是以 tick 作为时间单位
 	Tick()
 	// Campaign causes the Node to transition to candidate state and start campaigning to become leader.
 	Campaign(ctx context.Context) error
 	// Propose proposes that data be appended to the log.
+	// 向算法层发起一笔写数据的请求.
 	Propose(ctx context.Context, data []byte) error
 	// ProposeConfChange proposes config change.
 	// At most one ConfChange can be in the process of going through consensus.
@@ -171,10 +181,13 @@ type Peer struct {
 // StartNode returns a new Node given configuration and a list of raft peers.
 // It appends a ConfChangeAddNode entry for each given peer to the initial log.
 func StartNode(c *Config, peers []Peer) Node {
+	// 启动 node 时，先要初始化一个 raft 共识机制的抽象结构
 	r := newRaft(c)
 	// become the follower at term 1 and apply initial configuration
 	// entries of term 1
+	// 初次启动以term为1来启动
 	r.becomeFollower(1, None)
+	// 把集群中的其他节点都封装成添加节点的配置变更信息，添加到非持久化预写日志当中
 	for _, peer := range peers {
 		cc := pb.ConfChange{Type: pb.ConfChangeAddNode, NodeID: peer.ID, Context: peer.Context}
 		d, err := cc.Marshal()
@@ -187,6 +200,7 @@ func StartNode(c *Config, peers []Peer) Node {
 	// Mark these initial entries as committed.
 	// TODO(bdarnell): These entries are still unstable; do we need to preserve
 	// the invariant that committed < unstable?
+	// 启动之初的配置变更日志直接视为已提交
 	r.raftLog.committed = r.raftLog.lastIndex()
 	// Now apply them, mainly so that the application can call Campaign
 	// immediately after StartNode in tests. Note that these nodes will
@@ -197,12 +211,14 @@ func StartNode(c *Config, peers []Peer) Node {
 	// entries since they have already been committed).
 	// We do not set raftLog.applied so the application will be able
 	// to observe all conf changes via Ready.CommittedEntries.
+	// 将集群中其他节点的日志同步进度添加到进度 map prs 当中
 	for _, peer := range peers {
 		r.addNode(peer.ID)
 	}
-
+	// 初始化节点
 	n := newNode()
 	n.logger = c.Logger
+	// 异步调用 node.run 方法，启动算法层 raft 节点 goroutine，未来正是这个 goroutine 持续与应用层进行通信交互
 	go n.run(r)
 	return &n
 }
@@ -280,9 +296,12 @@ func (n *node) run(r *raft) {
 	prevHardSt := emptyState
 
 	for {
+		// 保证在 select 多路复用的模式下，Node.Ready （readyc）和 Node.Advance（advancec） 方法是被成对调用
+		// advance channel不为空，说明还在等应用调用Advance接口通知已经处理完毕了本次的ready数据
 		if advancec != nil {
 			readyc = nil
 		} else {
+			// 如果这次ready消息有包含更新，那么ready channel就不为空
 			rd = newReady(r, prevSoftSt, prevHardSt)
 			if rd.containsUpdates() {
 				readyc = n.readyc
@@ -310,16 +329,21 @@ func (n *node) run(r *raft) {
 		// TODO: maybe buffer the config propose if there exists one (the way
 		// described in raft dissertation)
 		// Currently it is dropped in Step silently.
+		// 处理本地收到的提交值
 		case m := <-propc:
 			m.From = r.id
 			r.Step(m)
 		case m := <-n.recvc:
+			// 处理其他节点发送过来的提交值
 			// filter out response message from unknown From.
 			if _, ok := r.prs[m.From]; ok || !IsResponseMsg(m.Type) {
+				// 需要确保节点在集群中或者不是应答类消息的情况下才进行处理
 				r.Step(m) // raft never returns an error
 			}
 		case cc := <-n.confc:
+			// 接收到配置发生变化的消息
 			if cc.NodeID == None {
+				// NodeId为空的情况，只需要直接返回当前的nodes就好
 				r.resetPendingConf()
 				select {
 				case n.confstatec <- pb.ConfState{Nodes: r.nodes()}:
@@ -333,6 +357,7 @@ func (n *node) run(r *raft) {
 			case pb.ConfChangeRemoveNode:
 				// block incoming proposal when local node is
 				// removed
+				// 如果删除的是本节点，停止提交
 				if cc.NodeID == r.id {
 					propc = nil
 				}
@@ -349,9 +374,13 @@ func (n *node) run(r *raft) {
 		case <-n.tickc:
 			r.tick()
 		case readyc <- rd:
+			// 通过channel写入ready数据
+			// 以下先把ready的值保存下来，等待下一次循环使用，或者当advance调用完毕之后用于修改raftLog的
+
 			if rd.SoftState != nil {
 				prevSoftSt = rd.SoftState
 			}
+			// 保存上一次还未持久化的entries的index、term
 			if len(rd.Entries) > 0 {
 				prevLastUnstablei = rd.Entries[len(rd.Entries)-1].Index
 				prevLastUnstablet = rd.Entries[len(rd.Entries)-1].Term
@@ -366,9 +395,12 @@ func (n *node) run(r *raft) {
 
 			r.msgs = nil
 			r.readStates = nil
+			// 修改advance channel不为空，等待接收advance消息
 			advancec = n.advancec
 		case <-advancec:
+			// 收到advance channel的消息
 			if prevHardSt.Commit != 0 {
+				// 将committed的消息applied
 				r.raftLog.appliedTo(prevHardSt.Commit)
 			}
 			if havePrevLastUnstablei {
