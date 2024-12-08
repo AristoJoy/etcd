@@ -140,4 +140,4 @@ etcd is under the Apache 2.0 license. See the [LICENSE](LICENSE) file for detail
 
 ### 源码阅读分支
 
-dev
+dev: this branch version is 3.1.10, and edit some dependencies
